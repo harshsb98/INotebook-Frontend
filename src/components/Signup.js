@@ -8,28 +8,25 @@ const Signup = () => {
     password: "",
     cpassword:""
   });
+  const history=useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault(); //Preventing page from reloading
-  
-    const response = await fetch("http://localhost:5000/api/auth/login", {
+    const {name,email,password}=credentials;
+    const response = await fetch("http://localhost:5000/api/auth/createuser", {
+      
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email: credentials.email,
-        password: credentials.password,
+        name,email,password
       }),
     });
     const json = await response.json();
     console.log(json);
-    if (json.success) {
       //Save the authtoken and redirect
       localStorage.setItem("token", json.authtoken);
       history("/");
-    } else {
-      alert("Invalid Crdentials");
-    }
   };
   
   const onChange = (e) => {
