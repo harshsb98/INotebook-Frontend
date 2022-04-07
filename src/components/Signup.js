@@ -1,34 +1,41 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Signup = () => {
+const Signup = (props) => {
   const [credentials, setcredentials] = useState({
-    name:"",
+    name: "",
     email: "",
     password: "",
-    cpassword:""
+    cpassword: "",
   });
-  const history=useNavigate();
+  const history = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault(); //Preventing page from reloading
-    const {name,email,password}=credentials;
+    const { name, email, password } = credentials;
     const response = await fetch("http://localhost:5000/api/auth/createuser", {
-      
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name,email,password
+        name,
+        email,
+        password,
       }),
     });
     const json = await response.json();
     console.log(json);
-      //Save the authtoken and redirect
-      localStorage.setItem("token", json.authtoken);
-      history("/");
+    if(json.success){
+    //Save the authtoken and redirect
+    localStorage.setItem("token", json.authtoken);
+    history("/");
+    props.showalert("Account Created Successfully","success")
+    }
+    else{
+      props.showalert("Invalid Credentials","danger")
+    }
   };
-  
+
   const onChange = (e) => {
     setcredentials({ ...credentials, [e.target.name]: e.target.value });
   };
